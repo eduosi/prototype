@@ -1,0 +1,17 @@
+Changes 0.0.1
+												10 Jul 2014
+	*) The first public version.
+	*) Feature: 实现了 prototype 核心功能
+	*) Feature: 实现了类继承
+	*) Feature: 扩展了 Object
+	*) Feature: 实现了数据类型判断
+	*) Feature: 实现了任意对象 JSON 编码
+	*) Feature: 扩展了 Array对象：元素位置查找，数组连接，迭代，检测元素是否存在，JSON 编码，清空，克隆
+	*) Feature: 扩展了 Boolean 对象：JSON 编码
+	*) Feature: 扩展了 Date 对象：判断是否为闰年，获取当前季节，日期时间格式化，JSON 编码
+	*) Feature: 扩展了 Function 对象：获取参数列表，延时执行
+	*) Feature: 扩展了 Math 对象：生成指定范围内的随机数
+	*) Feature: 扩展了 Number 对象：实现了 Math 的 abs、ceil、floor、round 功能，JSON 编码
+	*) Feature: 扩展了 RegExp 对象：
+	*) Feature: 扩展了 String 对象：判断子字符串是否存在，字符串截取，删除空白，HTML 编码、解码，删除标签，转换为数组，JSON 编码，生成 hash code
+	*) Feature: 扩展了 window 对象：浏览器特性及版本检测
