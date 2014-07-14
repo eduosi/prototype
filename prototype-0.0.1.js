@@ -55,7 +55,7 @@ var Class = {
  * Object 扩展
 */
 (function(){
- 	var class2types = ["Object", "Function", "Array", "String", "Number", "Boolean", "Date", "RegExp", "Error"];
+ 	var class2types = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error"];
  	var class2type = {};
 
  	for(var i in class2types){
@@ -68,12 +68,12 @@ var Class = {
  	 * @param obj 对象变量
  	 * @return 对象数据类型
  	*/
- 	function objectType(obj){
+ 	function type(obj){
  		if(obj == null){
 			return obj + "";
 		}
 
-		return typeof obj === "object"||typeof obj === "function" ? class2type[toString.call(obj)]||"object" : typeof obj;
+		return typeof obj === "object"||typeof obj === "function" ? class2type[class2type.toString.call(obj)]||"object" : typeof obj;
  	}
 
  	/**
@@ -83,7 +83,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isObject(obj){
- 		return objectType(obj) == "object";
+ 		return type(obj) == "object";
  	}
 
  	/**
@@ -93,7 +93,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isFunction(obj){
- 		return objectType(obj) == "function";
+ 		return type(obj) == "function";
  	}
 
  	/**
@@ -103,7 +103,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isArray(obj){
- 		return objectType(obj) == "array";
+ 		return type(obj) == "array";
  	}
 
  	/**
@@ -113,7 +113,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isString(obj){
- 		return objectType(obj) == "string";
+ 		return type(obj) == "string";
  	}
 
  	/**
@@ -123,7 +123,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isNumeric(obj){
- 		return objectType(obj) == "number";
+ 		return type(obj) == "number";
  	}
 
  	/**
@@ -133,7 +133,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isBoolean(obj){
- 		return objectType(obj) == "boolean";
+ 		return type(obj) == "boolean";
  	}
 
  	/**
@@ -143,7 +143,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isNull(obj){
- 		return objectType(obj) == "null";
+ 		return type(obj) == "null";
  	}
 
  	/**
@@ -153,7 +153,7 @@ var Class = {
  	 * @return boolean
  	*/
  	function isUndefined(obj){
- 		return objectType(obj) == "undefined";
+ 		return type(obj) == "undefined";
  	}
 
  	/**
@@ -224,7 +224,7 @@ var Class = {
  	}
 
  	Class.extend(Object, {
- 		objectType:		objectType, 
+ 		type:			type, 
  		isObject: 		isObject, 
  		isFunction: 	isFunction, 
  		isArray: 		isArray, 
@@ -246,8 +246,8 @@ Class.extend(Function.prototype, (function(){
 	var _slice = Array.prototype.slice;
 
 	function update(array, args){
-    	var array_length = array.length;
-    	var args_size = args.length;
+    	var array_length = array.length,
+			args_size = args.length;
 
     	while(args_size--){
     		array[array_length + args_size] = args[args_size];
@@ -262,8 +262,8 @@ Class.extend(Function.prototype, (function(){
 	 * @return 函数参数名称列表
 	*/
 	function argumentNames(){
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1].replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, "").replace(/\s+/g, "").split(",");
-		return names.length == 1 && !names[0] ? [] : names;
+		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1].replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, "").replace(/\s+/g, "").split(", ");
+		return names.length == 1&&!names[0] ? [] : names;
 	}
 
   	/**
@@ -273,8 +273,8 @@ Class.extend(Function.prototype, (function(){
   	 * @return mixed
   	*/
   	function delay(timeout){
-    	var __method = this;
-    	var args = _slice.call(arguments, 1);
+    	var __method = this,
+			args = _slice.call(arguments, 1);
 
     	return window.setTimeout(function(){
       		return __method.apply(__method, args);
@@ -347,9 +347,8 @@ Class.extend(Array.prototype, (function(){
 	function toJSON(){
 		var results = [];
 
-    	this.each(function(i, value){
+    	this.forEach(function(value){
       		var val = Object.toJSON(value);
-
       		if(Object.isUndefined(val) == false){
       			results.push(val);
       		}
@@ -409,13 +408,8 @@ if(Object.isFunction(Array.prototype.indexOf) === false){
 	 * @param fromindex 可选的整数参数。规定在数组中开始检索的位置。它的合法取值是 0 到 array.length - 1。如省略该参数，则将从数组的第一个元素开始检索。
 	 * @return 元素首次出现的位置。如果未检索到元素，则返回 -1
 	*/
-	Array.prototype.indexOf = function(){
-		fromindex = fromindex||0;
-
-    	if(fromindex < 0){
-    		fromindex = this.length + fromindex;
-    	}
-
+	Array.prototype.indexOf = function(item, fromindex){
+		fromindex = isNaN(fromindex) == true ? 0 : (fromindex < 0 ? this.length + fromindex : fromindex);
     	for(; fromindex < this.length; fromindex++){
     		if(this[fromindex] === item){
     			return fromindex;
@@ -433,10 +427,10 @@ if(Object.isFunction(Array.prototype.lastIndexOf) === false){
 	 * @param fromindex 可选的整数参数。规定在数组中开始检索的位置。它的合法取值是 0 到 array.length - 1。如省略该参数，则将从数组的最后一个元素开始检索。
 	 * @return 元素最后次出现的位置。如果未检索到元素，则返回 -1
 	*/
- 	Array.prototype.lastIndexOf = function(iterator){
+ 	Array.prototype.lastIndexOf = function(item, fromindex){
  		fromindex = isNaN(fromindex) == true ? this.length : (fromindex < 0 ? this.length + fromindex : fromindex) + 1;
     	var n = this.slice(0, fromindex).reverse().indexOf(item);
-    	return (n < 0) ? n : fromindex - n - 1;
+    	return n < 0 ? n : fromindex - n - 1;
  	}
 }
 if(Object.isFunction(Array.prototype.concat) === false){
@@ -447,8 +441,7 @@ if(Object.isFunction(Array.prototype.concat) === false){
 	 * @return 连接后的数组
 	*/
  	Array.prototype.concat = function(){
- 		var result = this.slice(0);
-		var item;
+ 		var item, result = this.slice(0);
 
 		for(var i = 0; i < arguments.length; i++){
 			item = arguments[i];
@@ -540,7 +533,7 @@ Class.extend(String.prototype, (function(){
  	 * @return boolean
  	*/
  	function equal(str){
- 		if(Object.isString(str)||Object.isFunction(str.toString)){
+ 		if(str&&(Object.isString(str)||Object.isFunction(str.toString))){
  			return this == str.toString();
  		}
 
@@ -554,7 +547,7 @@ Class.extend(String.prototype, (function(){
  	 * @return boolean
  	*/
  	function equalsIgnoreCase(str){
- 		if(Object.isString(str)||Object.isFunction(str.toString)){
+ 		if(str&&(Object.isString(str)||Object.isFunction(str.toString))){
  			return this.toLowerCase() == str.toString().toLowerCase();
  		}
 
@@ -608,6 +601,7 @@ Class.extend(String.prototype, (function(){
  	 * @return 子字符串
  	*/
  	function left(length){
+		length = length||0;
  		return _substr(this, 0, length);
  	}
 
@@ -618,6 +612,7 @@ Class.extend(String.prototype, (function(){
  	 * @return 子字符串
  	*/
  	function right(length){
+		length = length||0;
  		return _substr(this, this.length - length, length);
  	}
 
@@ -720,6 +715,10 @@ Class.extend(String.prototype, (function(){
   		return this.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   	}
 
+	function stripTag(str, tag){
+		return str.replace(new RegExp("<"+tag+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tag+">", "gi"), "");
+	}
+
   	/**
   	 * 删除标签
   	 *
@@ -728,20 +727,16 @@ Class.extend(String.prototype, (function(){
   	*/
   	function stripTags(tags){
   		if(Object.isString(tags) == true){
-  			return this.replace(new RegExp("<"+tags+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tags+">", "gi"), "");
+			return stripTag(this, tags);
   		}else if(Object.isArray(tags) == true){
   			var result = this;
 
   			for(var i = 0; i < tags.length; i++){
-  				result = result.replace(new RegExp("<"+tags[i]+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tags[i]+">", "gi"), "");
+				result = stripTag(result, tags[i]);
   			}
 
   			return result;
   		}else{
-  			if(Object.isNull(tags) == true||Object.isUndefined(tags) == true){
-  				throw "Invalid type: "+Object.objectType(tags);
-  			}
-
   			return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, "");
   		}
   	}
@@ -780,7 +775,8 @@ Class.extend(String.prototype, (function(){
       		return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
     	});
 
-    	return useDoubleQuotes == true ? '"' + escapedString.replace(/"/g, '\\"') + '"' : "'" + escapedString.replace(/'/g, '\\\'') + "'";
+		var str = escapedString.replace(/"/g, '\\"');
+    	return useDoubleQuotes == true ? '"' + str + '"' : "'" + str + "'";
   	}
 
   	/**
@@ -987,21 +983,21 @@ Class.extend(Boolean.prototype, (function(){
 */
 Class.extend(Date.prototype, (function(){
 	var _season_map = {
-		"N": ["Spring", "Summer", "Autumn", "Winter"],
-		"NC": ["\u6625", "\u590f", "\u79cb", "\u51ac"]
-	};
-	var _month_map = {
-		"M": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-		"MM": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-		"MC": ["\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u5341\u4E00", "\u5341\u4E8C"]
-	};
-	var _weekday_map = {
-		"W": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-		"WW": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-		"WC": ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"]
-	};
-	var _leap_year_month_days = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	var _year_month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+			"N": 	["Spring", "Summer", "Autumn", "Winter"],
+			"NC": 	["\u6625", "\u590f", "\u79cb", "\u51ac"]
+		},
+		_month_map = {
+			"M": 	["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			"MM": 	["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			"MC": 	["\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u5341\u4E00", "\u5341\u4E8C"]
+		},
+		_weekday_map = {
+			"W": 	["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+			"WW": 	["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+			"WC":	["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"]
+		},
+		_leap_year_month_days = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+		_year_month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function _isLeapYear(year){
 		return Object.isNumeric(year) == true&&year % 4 == 0&&(year % 100 != 0||year % 400 == 0);
@@ -1038,8 +1034,8 @@ Class.extend(Date.prototype, (function(){
 	}
 
 	function _getDayOfYear(year, month, date){
-		var days = 0;
-		var month_days = _isLeapYear(year) == true ? _leap_year_month_days : _year_month_days;
+		var days = 0,
+			month_days = _isLeapYear(year) == true ? _leap_year_month_days : _year_month_days;
 
 		for(var m = 0; m < month; m++){
 			days += month_days[m];
@@ -1107,10 +1103,10 @@ Class.extend(Date.prototype, (function(){
 
 		format = (typeof format === "object" ? format.toString() : format + "");
 
-		var year = this.getFullYear();
-		var month = this.getMonth();
-		var i = 0;
-		var result = "";
+		var year = this.getFullYear(),
+			month = this.getMonth(),
+			i = 0,
+			result = "";
 
 		function lookAhead(match){
 			var matches = (i + 1 < format.length&&format.charAt(i + 1) === match);
@@ -1245,15 +1241,15 @@ Class.extend(Date.prototype, (function(){
  * window 对象扩展
 */
 (function(){
- 	var userAgent = navigator.userAgent;
- 	var isChrome = /Chrome/.test(userAgent);
- 	var isFirefox = /Firefox/.test(userAgent);
- 	var isMozilla = /Mozilla/.test(userAgent);
- 	var isOpera = /OPR/.test(userAgent);
- 	var isMSIE = !!window.attachEvent&&!isOpera;
-	var isNetscape = /Netscape([\d]*)\/([^\s]+)/i.test(userAgent);
- 	var isSafari = /Safari/.test(userAgent)&&Object.isFunction(window.openDatabase);
- 	var mobileMaps = ["Android", "iPhone", "Windows Phone"];
+ 	var userAgent = navigator.userAgent,
+		isChrome = /\(KHTML, like Gecko\) Chrome\//.test(userAgent),
+		isFirefox = userAgent.exists("Firefox"),
+		isMozilla = userAgent.exists("Mozilla"),
+		isOpera = /\(KHTML, like Gecko\) Chrome\//.test(userAgent)&&userAgent.exists("OPR"),
+		isMSIE = !!window.attachEvent&&!isOpera,
+		isNetscape = /Netscape([\d]*)\/([^\s]+)/i.test(userAgent),
+		isSafari = userAgent.exists("Safari")&&Object.isFunction(window.openDatabase),
+		mobileMaps = ["Android", "iPhone", "Windows Phone"];
 
 	function browser(){
  		/**
@@ -1263,8 +1259,14 @@ Class.extend(Date.prototype, (function(){
  		*/
  		function getName(){
  			switch(true){
+ 				case isOpera:
+ 					return "Opera";
+ 					break;
  				case isChrome:
  					return "Google Chrome";
+ 					break;
+ 				case isSafari:
+ 					return "Safari";
  					break;
  				case isFirefox:
  					return "Firefox";
@@ -1275,15 +1277,9 @@ Class.extend(Date.prototype, (function(){
  				case isMSIE:
  					return "Internet Explorer";
  					break;
- 				case isOpera:
- 					return "Opera";
- 					break;
 				case isNetscape:
 					return "Netscape";
 					break;
- 				case isSafari:
- 					return "Safari";
- 					break;
  				default:
  					return "unknown";
  					break;
@@ -1297,8 +1293,14 @@ Class.extend(Date.prototype, (function(){
  		*/
  		function getVersion(){
  			switch(true){
+ 				case isOpera:
+ 					return userAgent.match(/OPR\/([\d.]+)/)[1];
+ 					break;
  				case isChrome:
  					return userAgent.match(/Chrome\/([\d.]+)/)[1];
+ 					break;
+ 				case isSafari:
+ 					return userAgent.match(/Version\/([\d.]+)/)[1];
  					break;
  				case isFirefox:
  					return userAgent.match(/Firefox\/([\d.]+)/)[1];
@@ -1308,12 +1310,6 @@ Class.extend(Date.prototype, (function(){
  					break;
  				case isMSIE:
  					return userAgent.match(/Firefox\/([\d.]+)/)[1];
- 					break;
- 				case isOpera:
- 					return userAgent.match(/OPR\/([\d.]+)/)[1];
- 					break;
- 				case isSafari:
- 					return userAgent.match(/Version\/([\d.]+)/)[1];
  					break;
  				default:
  					break;
@@ -1411,8 +1407,9 @@ Class.extend(Date.prototype, (function(){
 			}else{
 				netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-				var interfaces = Components.interfaces;
-				var clipboard = Components.classes["@mozilla.org/widget/clipboard;1"].createInstance(interfaces.nsIClipboard);
+				var interfaces = Components.interfaces,
+					clipboard = Components.classes["@mozilla.org/widget/clipboard;1"].createInstance(interfaces.nsIClipboard);
+
 				if(!!clipboard === false){
 					return;
 				}

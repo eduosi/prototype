@@ -58,9 +58,8 @@ Class.extend(Array.prototype, (function(){
 	function toJSON(){
 		var results = [];
 
-    	this.each(function(i, value){
+    	this.forEach(function(value){
       		var val = Object.toJSON(value);
-
       		if(Object.isUndefined(val) == false){
       			results.push(val);
       		}
@@ -120,13 +119,8 @@ if(Object.isFunction(Array.prototype.indexOf) === false){
 	 * @param fromindex 可选的整数参数。规定在数组中开始检索的位置。它的合法取值是 0 到 array.length - 1。如省略该参数，则将从数组的第一个元素开始检索。
 	 * @return 元素首次出现的位置。如果未检索到元素，则返回 -1
 	*/
-	Array.prototype.indexOf = function(){
-		fromindex = fromindex||0;
-
-    	if(fromindex < 0){
-    		fromindex = this.length + fromindex;
-    	}
-
+	Array.prototype.indexOf = function(item, fromindex){
+		fromindex = isNaN(fromindex) == true ? 0 : (fromindex < 0 ? this.length + fromindex : fromindex);
     	for(; fromindex < this.length; fromindex++){
     		if(this[fromindex] === item){
     			return fromindex;
@@ -144,10 +138,10 @@ if(Object.isFunction(Array.prototype.lastIndexOf) === false){
 	 * @param fromindex 可选的整数参数。规定在数组中开始检索的位置。它的合法取值是 0 到 array.length - 1。如省略该参数，则将从数组的最后一个元素开始检索。
 	 * @return 元素最后次出现的位置。如果未检索到元素，则返回 -1
 	*/
- 	Array.prototype.lastIndexOf = function(iterator){
+ 	Array.prototype.lastIndexOf = function(item, fromindex){
  		fromindex = isNaN(fromindex) == true ? this.length : (fromindex < 0 ? this.length + fromindex : fromindex) + 1;
     	var n = this.slice(0, fromindex).reverse().indexOf(item);
-    	return (n < 0) ? n : fromindex - n - 1;
+    	return n < 0 ? n : fromindex - n - 1;
  	}
 }
 if(Object.isFunction(Array.prototype.concat) === false){
@@ -158,8 +152,7 @@ if(Object.isFunction(Array.prototype.concat) === false){
 	 * @return 连接后的数组
 	*/
  	Array.prototype.concat = function(){
- 		var result = this.slice(0);
-		var item;
+ 		var item, result = this.slice(0);
 
 		for(var i = 0; i < arguments.length; i++){
 			item = arguments[i];

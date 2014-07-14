@@ -3,21 +3,21 @@
 */
 Class.extend(Date.prototype, (function(){
 	var _season_map = {
-		"N": ["Spring", "Summer", "Autumn", "Winter"],
-		"NC": ["\u6625", "\u590f", "\u79cb", "\u51ac"]
-	};
-	var _month_map = {
-		"M": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-		"MM": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-		"MC": ["\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u5341\u4E00", "\u5341\u4E8C"]
-	};
-	var _weekday_map = {
-		"W": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-		"WW": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-		"WC": ["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"]
-	};
-	var _leap_year_month_days = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-	var _year_month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+			"N": 	["Spring", "Summer", "Autumn", "Winter"],
+			"NC": 	["\u6625", "\u590f", "\u79cb", "\u51ac"]
+		},
+		_month_map = {
+			"M": 	["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+			"MM": 	["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+			"MC": 	["\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D", "\u4E03", "\u516B", "\u4E5D", "\u5341", "\u5341\u4E00", "\u5341\u4E8C"]
+		},
+		_weekday_map = {
+			"W": 	["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+			"WW": 	["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+			"WC":	["\u65E5", "\u4E00", "\u4E8C", "\u4E09", "\u56DB", "\u4E94", "\u516D"]
+		},
+		_leap_year_month_days = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
+		_year_month_days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
 	function _isLeapYear(year){
 		return Object.isNumeric(year) == true&&year % 4 == 0&&(year % 100 != 0||year % 400 == 0);
@@ -54,8 +54,8 @@ Class.extend(Date.prototype, (function(){
 	}
 
 	function _getDayOfYear(year, month, date){
-		var days = 0;
-		var month_days = _isLeapYear(year) == true ? _leap_year_month_days : _year_month_days;
+		var days = 0,
+			month_days = _isLeapYear(year) == true ? _leap_year_month_days : _year_month_days;
 
 		for(var m = 0; m < month; m++){
 			days += month_days[m];
@@ -123,10 +123,10 @@ Class.extend(Date.prototype, (function(){
 
 		format = (typeof format === "object" ? format.toString() : format + "");
 
-		var year = this.getFullYear();
-		var month = this.getMonth();
-		var i = 0;
-		var result = "";
+		var year = this.getFullYear(),
+			month = this.getMonth(),
+			i = 0,
+			result = "";
 
 		function lookAhead(match){
 			var matches = (i + 1 < format.length&&format.charAt(i + 1) === match);

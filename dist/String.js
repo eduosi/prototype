@@ -70,7 +70,7 @@ Class.extend(String.prototype, (function(){
  	 * @return boolean
  	*/
  	function equal(str){
- 		if(Object.isString(str)||Object.isFunction(str.toString)){
+ 		if(str&&(Object.isString(str)||Object.isFunction(str.toString))){
  			return this == str.toString();
  		}
 
@@ -84,7 +84,7 @@ Class.extend(String.prototype, (function(){
  	 * @return boolean
  	*/
  	function equalsIgnoreCase(str){
- 		if(Object.isString(str)||Object.isFunction(str.toString)){
+ 		if(str&&(Object.isString(str)||Object.isFunction(str.toString))){
  			return this.toLowerCase() == str.toString().toLowerCase();
  		}
 
@@ -138,6 +138,7 @@ Class.extend(String.prototype, (function(){
  	 * @return 子字符串
  	*/
  	function left(length){
+		length = length||0;
  		return _substr(this, 0, length);
  	}
 
@@ -148,6 +149,7 @@ Class.extend(String.prototype, (function(){
  	 * @return 子字符串
  	*/
  	function right(length){
+		length = length||0;
  		return _substr(this, this.length - length, length);
  	}
 
@@ -250,6 +252,10 @@ Class.extend(String.prototype, (function(){
   		return this.replace(/&quot;/g, '"').replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
   	}
 
+	function stripTag(str, tag){
+		return str.replace(new RegExp("<"+tag+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tag+">", "gi"), "");
+	}
+
   	/**
   	 * 删除标签
   	 *
@@ -258,20 +264,16 @@ Class.extend(String.prototype, (function(){
   	*/
   	function stripTags(tags){
   		if(Object.isString(tags) == true){
-  			return this.replace(new RegExp("<"+tags+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tags+">", "gi"), "");
+			return stripTag(this, tags);
   		}else if(Object.isArray(tags) == true){
   			var result = this;
 
   			for(var i = 0; i < tags.length; i++){
-  				result = result.replace(new RegExp("<"+tags[i]+"(\s+(\"[^\"]*\"|'[^']*'|[^>])+)?>|<\/"+tags[i]+">", "gi"), "");
+				result = stripTag(result, tags[i]);
   			}
 
   			return result;
   		}else{
-  			if(Object.isNull(tags) == true||Object.isUndefined(tags) == true){
-  				throw "Invalid type: "+Object.objectType(tags);
-  			}
-
   			return this.replace(/<\w+(\s+("[^"]*"|'[^']*'|[^>])+)?>|<\/\w+>/gi, "");
   		}
   	}
@@ -310,7 +312,8 @@ Class.extend(String.prototype, (function(){
       		return '\\u00' + character.charCodeAt().toPaddedString(2, 16);
     	});
 
-    	return useDoubleQuotes == true ? '"' + escapedString.replace(/"/g, '\\"') + '"' : "'" + escapedString.replace(/'/g, '\\\'') + "'";
+		var str = escapedString.replace(/"/g, '\\"');
+    	return useDoubleQuotes == true ? '"' + str + '"' : "'" + str + "'";
   	}
 
   	/**

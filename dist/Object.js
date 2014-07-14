@@ -2,7 +2,7 @@
  * Object 扩展
 */
 (function(){
- 	var class2types = ["Object", "Function", "Array", "String", "Number", "Boolean", "Date", "RegExp", "Error"];
+ 	var class2types = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error"];
  	var class2type = {};
 
  	for(var i in class2types){
@@ -15,12 +15,12 @@
  	 * @param obj 对象变量
  	 * @return 对象数据类型
  	*/
- 	function objectType(obj){
+ 	function type(obj){
  		if(obj == null){
 			return obj + "";
 		}
 
-		return typeof obj === "object"||typeof obj === "function" ? class2type[toString.call(obj)]||"object" : typeof obj;
+		return typeof obj === "object"||typeof obj === "function" ? class2type[class2type.toString.call(obj)]||"object" : typeof obj;
  	}
 
  	/**
@@ -30,7 +30,7 @@
  	 * @return boolean
  	*/
  	function isObject(obj){
- 		return objectType(obj) == "object";
+ 		return type(obj) == "object";
  	}
 
  	/**
@@ -40,7 +40,7 @@
  	 * @return boolean
  	*/
  	function isFunction(obj){
- 		return objectType(obj) == "function";
+ 		return type(obj) == "function";
  	}
 
  	/**
@@ -50,7 +50,7 @@
  	 * @return boolean
  	*/
  	function isArray(obj){
- 		return objectType(obj) == "array";
+ 		return type(obj) == "array";
  	}
 
  	/**
@@ -60,7 +60,7 @@
  	 * @return boolean
  	*/
  	function isString(obj){
- 		return objectType(obj) == "string";
+ 		return type(obj) == "string";
  	}
 
  	/**
@@ -70,7 +70,7 @@
  	 * @return boolean
  	*/
  	function isNumeric(obj){
- 		return objectType(obj) == "number";
+ 		return type(obj) == "number";
  	}
 
  	/**
@@ -80,7 +80,7 @@
  	 * @return boolean
  	*/
  	function isBoolean(obj){
- 		return objectType(obj) == "boolean";
+ 		return type(obj) == "boolean";
  	}
 
  	/**
@@ -90,7 +90,7 @@
  	 * @return boolean
  	*/
  	function isNull(obj){
- 		return objectType(obj) == "null";
+ 		return type(obj) == "null";
  	}
 
  	/**
@@ -100,7 +100,7 @@
  	 * @return boolean
  	*/
  	function isUndefined(obj){
- 		return objectType(obj) == "undefined";
+ 		return type(obj) == "undefined";
  	}
 
  	/**
@@ -171,7 +171,7 @@
  	}
 
  	Class.extend(Object, {
- 		objectType:		objectType, 
+ 		type:			type, 
  		isObject: 		isObject, 
  		isFunction: 	isFunction, 
  		isArray: 		isArray, 

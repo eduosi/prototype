@@ -2,15 +2,15 @@
  * window 对象扩展
 */
 (function(){
- 	var userAgent = navigator.userAgent;
- 	var isChrome = /Chrome/.test(userAgent);
- 	var isFirefox = /Firefox/.test(userAgent);
- 	var isMozilla = /Mozilla/.test(userAgent);
- 	var isOpera = /OPR/.test(userAgent);
- 	var isMSIE = !!window.attachEvent&&!isOpera;
-	var isNetscape = /Netscape([\d]*)\/([^\s]+)/i.test(userAgent);
- 	var isSafari = /Safari/.test(userAgent)&&Object.isFunction(window.openDatabase);
- 	var mobileMaps = ["Android", "iPhone", "Windows Phone"];
+ 	var userAgent = navigator.userAgent,
+		isChrome = /\(KHTML, like Gecko\) Chrome\//.test(userAgent),
+		isFirefox = userAgent.exists("Firefox"),
+		isMozilla = userAgent.exists("Mozilla"),
+		isOpera = /\(KHTML, like Gecko\) Chrome\//.test(userAgent)&&userAgent.exists("OPR"),
+		isMSIE = !!window.attachEvent&&!isOpera,
+		isNetscape = /Netscape([\d]*)\/([^\s]+)/i.test(userAgent),
+		isSafari = userAgent.exists("Safari")&&Object.isFunction(window.openDatabase),
+		mobileMaps = ["Android", "iPhone", "Windows Phone"];
 
 	function browser(){
  		/**
@@ -20,8 +20,14 @@
  		*/
  		function getName(){
  			switch(true){
+ 				case isOpera:
+ 					return "Opera";
+ 					break;
  				case isChrome:
  					return "Google Chrome";
+ 					break;
+ 				case isSafari:
+ 					return "Safari";
  					break;
  				case isFirefox:
  					return "Firefox";
@@ -32,15 +38,9 @@
  				case isMSIE:
  					return "Internet Explorer";
  					break;
- 				case isOpera:
- 					return "Opera";
- 					break;
 				case isNetscape:
 					return "Netscape";
 					break;
- 				case isSafari:
- 					return "Safari";
- 					break;
  				default:
  					return "unknown";
  					break;
@@ -54,8 +54,14 @@
  		*/
  		function getVersion(){
  			switch(true){
+ 				case isOpera:
+ 					return userAgent.match(/OPR\/([\d.]+)/)[1];
+ 					break;
  				case isChrome:
  					return userAgent.match(/Chrome\/([\d.]+)/)[1];
+ 					break;
+ 				case isSafari:
+ 					return userAgent.match(/Version\/([\d.]+)/)[1];
  					break;
  				case isFirefox:
  					return userAgent.match(/Firefox\/([\d.]+)/)[1];
@@ -65,12 +71,6 @@
  					break;
  				case isMSIE:
  					return userAgent.match(/Firefox\/([\d.]+)/)[1];
- 					break;
- 				case isOpera:
- 					return userAgent.match(/OPR\/([\d.]+)/)[1];
- 					break;
- 				case isSafari:
- 					return userAgent.match(/Version\/([\d.]+)/)[1];
  					break;
  				default:
  					break;
@@ -168,8 +168,9 @@
 			}else{
 				netscape.security.PrivilegeManager.enablePrivilege("UniversalXPConnect");
 
-				var interfaces = Components.interfaces;
-				var clipboard = Components.classes["@mozilla.org/widget/clipboard;1"].createInstance(interfaces.nsIClipboard);
+				var interfaces = Components.interfaces,
+					clipboard = Components.classes["@mozilla.org/widget/clipboard;1"].createInstance(interfaces.nsIClipboard);
+
 				if(!!clipboard === false){
 					return;
 				}

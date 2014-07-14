@@ -5,8 +5,8 @@ Class.extend(Function.prototype, (function(){
 	var _slice = Array.prototype.slice;
 
 	function update(array, args){
-    	var array_length = array.length;
-    	var args_size = args.length;
+    	var array_length = array.length,
+			args_size = args.length;
 
     	while(args_size--){
     		array[array_length + args_size] = args[args_size];
@@ -21,8 +21,8 @@ Class.extend(Function.prototype, (function(){
 	 * @return 函数参数名称列表
 	*/
 	function argumentNames(){
-		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1].replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, "").replace(/\s+/g, "").split(",");
-		return names.length == 1 && !names[0] ? [] : names;
+		var names = this.toString().match(/^[\s\(]*function[^(]*\(([^)]*)\)/)[1].replace(/\/\/.*?[\r\n]|\/\*(?:.|[\r\n])*?\*\//g, "").replace(/\s+/g, "").split(", ");
+		return names.length == 1&&!names[0] ? [] : names;
 	}
 
   	/**
@@ -32,8 +32,8 @@ Class.extend(Function.prototype, (function(){
   	 * @return mixed
   	*/
   	function delay(timeout){
-    	var __method = this;
-    	var args = _slice.call(arguments, 1);
+    	var __method = this,
+			args = _slice.call(arguments, 1);
 
     	return window.setTimeout(function(){
       		return __method.apply(__method, args);
